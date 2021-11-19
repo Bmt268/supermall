@@ -147,8 +147,7 @@ export default {
       this.isshowbacktop = -position.y > 1000;
 
       // 2.决定tabControl 是否吸顶（position：fixed）
-      this.isTabFixed = -position.y > -this.tabOffsetTop;
-      console.log(this.isTabFixed);
+      this.isTabFixed = -position.y > this.tabOffsetTop;
     },
     loadMore() {
       // 先监听图片什么时候加载完
