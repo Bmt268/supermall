@@ -1,0 +1,7 @@
+@import "./normalize.css";
+body {
+    padding: 0;
+} 
+:root {
+    --color-tint:#ff8198;
+}
