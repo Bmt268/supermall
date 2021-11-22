@@ -131,11 +131,13 @@ export default {
   margin-top: 5px;
 }
 .enter-shop {
-  border: 1px solid #ccc;
   font-size: 15px;
   text-align: center;
-  width: 100px;
+  width: 150px;
   height: 100%;
   margin: 0 auto;
+  border-radius: 8px;
+  padding: 3px 0;
+  background-color: rgb(241, 240, 240);
 }
 </style>

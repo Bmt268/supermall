@@ -74,9 +74,10 @@ export default {
 .info-service {
   margin-top: 5px;
   font-size: 15px;
-  font-weight: 700;
+  font-weight: 500;
   text-align: center;
   padding: 10px 0;
+  color: black;
 }
 
 .info-service img {
