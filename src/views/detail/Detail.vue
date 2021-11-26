@@ -1,7 +1,17 @@
 <template>
   <div id="detail">
-    <detailnavbar class="detail-nav" @titleClick="titleClick"></detailnavbar>
-    <scroll class="content" :pull-up-load="true" ref="scroll">
+    <detailnavbar
+      class="detail-nav"
+      @titleClick="titleClick"
+      ref="nav"
+    ></detailnavbar>
+    <scroll
+      class="content"
+      :pull-up-load="true"
+      ref="scroll"
+      :probe-type="3"
+      @scroll="contentScroll"
+    >
       <detail-swiper :top-images="topImages"></detail-swiper>
       <detail-base-info :goods="goods"></detail-base-info>
       <detail-shop-info :shop="shop"></detail-shop-info>
@@ -19,6 +29,7 @@
       ></detail-comment-info>
       <goods-list ref="recommend" :goods="recommends"></goods-list>
     </scroll>
+    <detail-bottom-bar></detail-bottom-bar>
   </div>
 </template>
 
@@ -30,6 +41,7 @@ import DetailShopInfo from "./childcomps/DetailShopInfo";
 import DetailGoodsInfo from "./childcomps/DetailGoodsInfo";
 import DetailParamInfo from "./childcomps/DetailParamInfo";
 import DetailCommentInfo from "./childcomps/DetailCommentInfo";
+import DetailBottomBar from "./childcomps/DetailBottomBar";
 
 import Scroll from "components/content/scroll/Scroll.vue";
 import GoodsList from "components/content/goods/GoodsList";
@@ -53,6 +65,7 @@ export default {
     DetailGoodsInfo,
     DetailParamInfo,
     DetailCommentInfo,
+    DetailBottomBar,
     Scroll,
     GoodsList,
   },
@@ -68,6 +81,7 @@ export default {
       recommends: [],
       themeTopYs: [],
       getThemeTopY: null,
+      currentIndex: 0,
     };
   },
   created() {
@@ -129,7 +143,8 @@ export default {
         this.themeTopYs.push(this.$refs.params.$el.offsetTop);
         this.themeTopYs.push(this.$refs.comment.$el.offsetTop);
         this.themeTopYs.push(this.$refs.recommend.$el.offsetTop);
-        console.log(this.themeTopYs);
+        this.themeTopYs.push(Number.MAX_VALUE);
+        // console.log(this.themeTopYs);
       }, 100);
     });
   },
@@ -144,6 +159,50 @@ export default {
       // console.log(index);
       this.$refs.scroll.scrollTo(0, -this.themeTopYs[index], 300);
     },
+    contentScroll(position) {
+      // console.log(position);
+      // 1.获取Y值
+      const positionY = -position.y;
+      // 2.positionY和主题中值进行对比
+      // [0,7938,9120,9452,Number.Max_Value]
+      // positionY在0到7938之间，index=0
+      // positionY在7938到9120之间，index=1
+      // positionY在9120到9452之间，index=2
+      // positionY 超过9120值，index=3
+
+      let length = this.themeTopYs.length;
+      // 第二种
+      for (let i = 0; i < length - 1; i++) {
+        if (
+          this.currentIndex !== i &&
+          positionY >= this.themeTopYs[i] &&
+          positionY < this.themeTopYs[i + 1]
+        ) {
+          this.currentIndex = i;
+          this.$refs.nav.currentIndex = this.currentIndex;
+        }
+      }
+
+      // 第一种方法
+      // for (let i = 0; i < length; i++) {
+      //   console.log(i); 这个i是一个string
+      //   if (
+      //     positionY > this.themeTopYs[parseInt(i)] &&
+      //     positionY < this.themeTopYs[parseInt(i) + 1]
+      //   ) {
+      //     console.log(i);
+      //   if (
+      //     this.currentIndex !== i &&
+      //     ((i < length - 1 &&
+      //       positionY >= this.themeTopYs[i] &&
+      //       positionY < this.themeTopYs[i + 1]) ||
+      //       (i === length - 1 && positionY >= this.themeTopYs[i]))
+      //   ) {
+      //     this.currentIndex = i;
+      //     this.$refs.nav.currentIndex = this.currentIndex;
+      //   }
+      // }
+    },
   },
 };
 </script>
@@ -157,7 +216,7 @@ export default {
 }
 .content {
   /* 100%是根据父元素的高度决定的  */
-  height: calc(100% - 44px);
+  height: calc(100% - 44px - 49px);
   overflow: hidden;
 }
 .detail-nav {
