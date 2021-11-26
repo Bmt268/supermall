@@ -158,7 +158,7 @@ export default {
     swiperImageLoad() {
       // 获取tabControl的OffsetTop
       // 所有组件都有一个属性$el: 用于获取组件中的元素
-      console.log(this.$refs.tabControl2.$el.offsetTop);
+      // console.log(this.$refs.tabControl2.$el.offsetTop);
       this.tabOffsetTop = this.$refs.tabControl2.$el.offsetTop;
     },
 
