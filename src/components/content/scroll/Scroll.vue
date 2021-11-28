@@ -48,7 +48,7 @@ export default {
     // 3.监听上拉事件
     this.scroll.on("pullingUp", () => {
       this.$emit("pullingUp");
-      console.log("底部");
+      // console.log("底部");
     });
   },
   methods: {
