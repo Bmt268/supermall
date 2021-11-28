@@ -12,6 +12,9 @@
       :probe-type="3"
       @scroll="contentScroll"
     >
+      <!-- <ul>
+        <li v-for="item in $store.state.cartList" :key="item">{{ item }}</li>
+      </ul> -->
       <detail-swiper :top-images="topImages"></detail-swiper>
       <detail-base-info :goods="goods"></detail-base-info>
       <detail-shop-info :shop="shop"></detail-shop-info>
@@ -29,7 +32,8 @@
       ></detail-comment-info>
       <goods-list ref="recommend" :goods="recommends"></goods-list>
     </scroll>
-    <detail-bottom-bar></detail-bottom-bar>
+    <back-top @click.native="backClick" v-show="isshowbacktop"></back-top>
+    <detail-bottom-bar @addCart="addToCart"></detail-bottom-bar>
   </div>
 </template>
 
@@ -42,6 +46,7 @@ import DetailGoodsInfo from "./childcomps/DetailGoodsInfo";
 import DetailParamInfo from "./childcomps/DetailParamInfo";
 import DetailCommentInfo from "./childcomps/DetailCommentInfo";
 import DetailBottomBar from "./childcomps/DetailBottomBar";
+import BackTop from "components/content/backtop/BackTop.vue";
 
 import Scroll from "components/content/scroll/Scroll.vue";
 import GoodsList from "components/content/goods/GoodsList";
@@ -66,6 +71,7 @@ export default {
     DetailParamInfo,
     DetailCommentInfo,
     DetailBottomBar,
+    BackTop,
     Scroll,
     GoodsList,
   },
@@ -82,6 +88,7 @@ export default {
       themeTopYs: [],
       getThemeTopY: null,
       currentIndex: 0,
+      isshowbacktop: false,
     };
   },
   created() {
@@ -131,29 +138,29 @@ export default {
 
       // console.log(this.themeTopYs);
       // });
-    });
-    // 3.请求推荐数据
-    getRecommend().then((res) => {
-      this.recommends = res.data.list;
-
-      // 4.给getThemeTopY赋值(对给this.themeTopYs赋值的操作进行防抖)
-      this.getThemeTopY = debounce(() => {
-        this.themeTopYs = [];
-        this.themeTopYs.push(0);
-        this.themeTopYs.push(this.$refs.params.$el.offsetTop);
-        this.themeTopYs.push(this.$refs.comment.$el.offsetTop);
-        this.themeTopYs.push(this.$refs.recommend.$el.offsetTop);
-        this.themeTopYs.push(Number.MAX_VALUE);
-        // console.log(this.themeTopYs);
-      }, 100);
+      // 3.请求推荐数据
+      getRecommend().then((res) => {
+        this.recommends = res.data.list;
+      });
     });
   },
-  mounted() {},
+  mounted() {
+    // 4.给getThemeTopY赋值(对给this.themeTopYs赋值的操作进行防抖)
+    this.getThemeTopY = debounce(() => {
+      this.themeTopYs = [];
+      this.themeTopYs.push(0);
+      this.themeTopYs.push(this.$refs.params.$el.offsetTop);
+      this.themeTopYs.push(this.$refs.comment.$el.offsetTop);
+      this.themeTopYs.push(this.$refs.recommend.$el.offsetTop);
+      this.themeTopYs.push(Number.MAX_VALUE);
+    }, 100);
+  },
   methods: {
     imageLoad() {
       this.$refs.scroll.refresh();
       this.$refs.scroll.scrollTo(0, 0, 0);
       this.getThemeTopY();
+      // console.log(this.getThemeTopY);
     },
     titleClick(index) {
       // console.log(index);
@@ -183,6 +190,9 @@ export default {
         }
       }
 
+      // 3.是否显示回顶部
+      this.isshowbacktop = -position.y > 1000;
+
       // 第一种方法
       // for (let i = 0; i < length; i++) {
       //   console.log(i); 这个i是一个string
@@ -203,6 +213,23 @@ export default {
       //   }
       // }
     },
+    backClick() {
+      //scroll class="content" 组件对象
+      this.$refs.scroll.scrollTo(0, 0, 500);
+    },
+    addToCart() {
+      // 1.获取购物车需要展示的信息
+      const product = {};
+      product.image = this.topImages[0];
+      product.title = this.goods.title;
+      product.desc = this.goods.desc;
+      product.price = this.goods.realPrice;
+      product.iid = this.iid;
+
+      // 2.将商品添加到购物车里
+      // this.$store.commit("addCart", product);
+      this.$store.dispatch("addCart", product);
+    },
   },
 };
 </script>
@@ -216,8 +243,13 @@ export default {
 }
 .content {
   /* 100%是根据父元素的高度决定的  */
-  height: calc(100% - 44px - 49px);
-  overflow: hidden;
+  /* height: calc(100% - 44px - 49px);
+  overflow: hidden; */
+  position: fixed;
+  top: 44px;
+  left: 0;
+  right: 0;
+  bottom: 49px;
 }
 .detail-nav {
   position: relative;

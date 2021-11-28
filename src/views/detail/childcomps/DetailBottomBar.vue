@@ -27,12 +27,17 @@
 <script>
 export default {
   name: "DetailBottomBar",
+  methods: {
+    addToCart() {
+      this.$emit("addCart");
+    },
+  },
 };
 </script>
 
 <style scoped>
 .bottom-bar {
-  height: 55px;
+  height: 49px;
   background-color: #fff;
   position: fixed;
   left: 0;
@@ -57,7 +62,7 @@ export default {
   display: block;
   width: 22px;
   height: 22px;
-  margin: 9px auto 3px;
+  margin: 3px auto 2px;
   background: url("~assets/img/detail/detail_bottom.png") 0 0/100%;
 }
 .bar-left .service {
@@ -70,7 +75,7 @@ export default {
 .bar-right {
   font-size: 15px;
   color: #fff;
-  line-height: 58px;
+  line-height: 49px;
 }
 .bar-right .cart {
   background-color: #ffe817;

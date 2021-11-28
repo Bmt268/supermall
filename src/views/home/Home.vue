@@ -99,13 +99,13 @@ export default {
     this.$refs.swiper;
     // 3.监听item中图片加载完成
 
-    const refresh = this.debounce(this.$refs.scroll.refresh);
+    // const refresh = this.debounce(this.$refs.scroll.refresh);
 
-    this.$bus.$on("itemimageload", () => {
-      refresh();
-      // console.log("----------");
-      // this.$refs.scroll.refresh();
-    });
+    // this.$bus.$on("itemimageload", () => {
+    //   refresh();
+    // console.log("----------");
+    // this.$refs.scroll.refresh();
+    // });
   },
   methods: {
     //事件监听相关方法
